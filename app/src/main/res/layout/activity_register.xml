@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.vadim.androidmesseger.AuthorizationActivity">
+    tools:context="com.example.vadim.androidmesseger.RegisterActivity">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,7 +19,17 @@
             android:id="@+id/UsernameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/UsernameHint" />
+            android:ems="10"
+            android:hint="@string/UsernameHint"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/EmailField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/EmailHint"
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/PasswordField"
@@ -30,15 +40,10 @@
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/LoginButton"
+            android:id="@+id/ConfirmButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/AuthorizationLogin" />
+            android:text="@string/Confirm" />
 
-        <Button
-            android:id="@+id/RegistrationButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/Registration" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

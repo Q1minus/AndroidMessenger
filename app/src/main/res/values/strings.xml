@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">AndroidMesseger</string>
     <string name="AuthorizationLogin">Log in</string>
-    <string name="AuthorizationUsername">Username</string>
-    <string name="AuthorizationPassword">Password</string>
+    <string name="UsernameHint">Username</string>
+    <string name="PasswordHint">Password</string>
     <string name="Registration">Registration</string>
+    <string name="EmailHint">Email</string>
+    <string name="Confirm">Confirm</string>
 </resources>
