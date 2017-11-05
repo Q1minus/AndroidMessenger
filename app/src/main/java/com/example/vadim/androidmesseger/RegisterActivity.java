@@ -1,15 +1,20 @@
 package com.example.vadim.androidmesseger;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.vadim.androidmesseger.database.UserTableDBHelper;
+
+
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
     private EditText username, email, password;
     private Button buttonConfirm;
+    private UserTableDBHelper userTableDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +27,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         buttonConfirm = findViewById(R.id.ConfirmButton);
         buttonConfirm.setOnClickListener(this);
+
+        userTableDbHelper = new UserTableDBHelper(this);
     }
 
     @Override
@@ -44,9 +51,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
+        SQLiteDatabase db = userTableDbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
         switch (view.getId()) {
             case R.id.ConfirmButton:
-                // TODO confirm rules. Added in DB
+                // TODO is valid Email username password ? Save : Error msg
                 break;
         }
     }
