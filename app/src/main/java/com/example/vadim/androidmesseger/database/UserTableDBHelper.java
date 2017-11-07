@@ -28,12 +28,8 @@ public class UserTableDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table " + TABLE_NAME + "(" +
-                COLUMN_ID       + " integer primary key autoincrement," +
-                COLUMN_USERNAME + " text," +
-                COLUMN_EMAIL    + " text," +
-                COLUMN_PASSWORD + " text," +
-                COLUMN_FRIEND_LIST_ID + "integer);";
+        String sql = String.format("create table %s(%s integer primary key autoincrement, %s text, %s text, %s text, %s integer);",
+                TABLE_NAME, COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_FRIEND_LIST_ID);
         db.execSQL(sql);
     }
 
