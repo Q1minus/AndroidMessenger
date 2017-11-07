@@ -8,17 +8,17 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Vadim Denisov on 05/11/17.
  */
 
-public class FriendListTableDBHelper extends SQLiteOpenHelper {
+public class FriendListDBHelper extends SQLiteOpenHelper {
     /* Database constants */
-    public static final String NAME = "AndroidMessengerDB";
-    public static final int VERSION = 1;
+    public static final String DATABASE_NAME = "AndroidMessenger.db";
+    public static final int DATABASE_VERSION = 1;
     /* Table and column constants */
     public static final String TABLE_NAME = "FriendList";
     public static final String COLUMN_USER_ID   = "user_id";
     public static final String COLUMN_FRIEND_ID = "friend_id";
 
-    public FriendListTableDBHelper(Context context) {
-        super(context, NAME, null, VERSION);
+    public FriendListDBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
