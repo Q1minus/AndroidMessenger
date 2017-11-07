@@ -3,15 +3,18 @@ package com.example.vadim.androidmesseger;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.Toast;
+
+import com.example.vadim.androidmesseger.database.UserDBHelper;
 
 public class AuthorizationActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText username, password;
     private Button buttonLogin, buttonRegistration;
+    private UserDBHelper userDbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,8 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
 
         buttonLogin.setOnClickListener(this);
         buttonRegistration.setOnClickListener(this);
+
+        userDbHelper = new UserDBHelper(this);
     }
 
     @Override
@@ -46,9 +51,17 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View view) {
+        String stringUsername = username.getText().toString();
+        String stringPassword = password.getText().toString();
+
         switch (view.getId()){
         case R.id.LoginButton:
-            // TODO Find user in DB, go to UserActivity
+            if (userDbHelper.Authentication(stringUsername, stringPassword)) {
+                // TODO Create UserMessageActivity
+                Toast.makeText(getApplicationContext(), "Welcome!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.BadUsernameOrPassword, Toast.LENGTH_LONG).show();
+            }
             break;
         case R.id.RegistrationButton:
             Intent intent = new Intent(this, RegisterActivity.class);
