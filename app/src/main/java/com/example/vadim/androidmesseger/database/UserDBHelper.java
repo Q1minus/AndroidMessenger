@@ -2,6 +2,7 @@ package com.example.vadim.androidmesseger.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
@@ -38,4 +39,52 @@ public class UserDBHelper extends SQLiteOpenHelper {
         //TODO Write upgrade code
     }
 
+    public boolean isExistsUsername(String username) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] columns = { COLUMN_USERNAME };
+        String whereCondition = COLUMN_USERNAME + "=?";
+        String[] whereArguments = { username };
+
+        Cursor cursor = database.query(
+                TABLE_NAME, columns,
+                whereCondition, whereArguments,
+                null, null, null
+        );
+
+        boolean isExist = cursor.moveToFirst();
+        cursor.close();
+
+        return isExist;
+    }
+
+    public boolean isExistsEmail(String email) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] columns = { COLUMN_EMAIL };
+        String whereCondition = COLUMN_EMAIL + "=?";
+        String[] whereArguments = { email };
+
+        Cursor cursor = database.query(
+                TABLE_NAME, columns,
+                whereCondition, whereArguments,
+                null, null, null
+        );
+
+        boolean isExist = cursor.moveToFirst();
+        cursor.close();
+
+        return isExist;
+    }
+
+    public long addUser(String username, String email, String password) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_USERNAME, username);
+        contentValues.put(COLUMN_EMAIL, email);
+        contentValues.put(COLUMN_PASSWORD, password);
+
+        return database.insert(TABLE_NAME, null, contentValues);
+    }
 }
