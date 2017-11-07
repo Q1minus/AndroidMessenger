@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
+import java.util.Currency;
+
 /**
  * Created by Vadim Denisov on 05/11/17.
  */
@@ -52,8 +54,12 @@ public class UserDBHelper extends SQLiteOpenHelper {
                 null, null, null
         );
 
-        boolean isExist = cursor.moveToFirst();
-        cursor.close();
+        boolean isExist = false;
+        try {
+            isExist = cursor.moveToFirst();
+        } finally {
+            cursor.close();
+        }
 
         return isExist;
     }
@@ -71,8 +77,12 @@ public class UserDBHelper extends SQLiteOpenHelper {
                 null, null, null
         );
 
-        boolean isExist = cursor.moveToFirst();
-        cursor.close();
+        boolean isExist = false;
+        try {
+            isExist = cursor.moveToFirst();
+        } finally {
+            cursor.close();
+        }
 
         return isExist;
     }
@@ -86,5 +96,36 @@ public class UserDBHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_PASSWORD, password);
 
         return database.insert(TABLE_NAME, null, contentValues);
+    }
+
+    public boolean Authentication(String username, String password) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] columns = { COLUMN_PASSWORD };
+        String whereCondition = COLUMN_USERNAME + "=?";
+        String[] whereArguments = { username };
+
+        Cursor cursor = database.query(
+                TABLE_NAME, columns,
+                whereCondition, whereArguments,
+                null, null, null
+        );
+
+        boolean result = false;
+        try {
+            int passwordColumnIndex = cursor.getColumnIndex(COLUMN_PASSWORD);
+
+            while (cursor.moveToNext()) {
+                String currentPassword = cursor.getString(passwordColumnIndex);
+                if (password.equals(currentPassword)) {
+                    result = true;
+                    break;
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return result;
     }
 }
