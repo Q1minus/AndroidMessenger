@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
+import com.example.vadim.androidmesseger.models.UserModel;
+
 import java.util.Currency;
 
 /**
@@ -31,8 +33,12 @@ public class UserDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = String.format("create table %s(%s integer primary key autoincrement, %s text, %s text, %s text, %s integer);",
-                TABLE_NAME, COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_FRIEND_LIST_ID);
+        String sql = "create table " + TABLE_NAME + "(" +
+                COLUMN_ID +             " integer primary key autoincrement, " +
+                COLUMN_USERNAME +       " text, " +
+                COLUMN_EMAIL +          " text, " +
+                COLUMN_PASSWORD +       " text, " +
+                COLUMN_FRIEND_LIST_ID + " integer);";
         db.execSQL(sql);
     }
 
@@ -98,12 +104,46 @@ public class UserDBHelper extends SQLiteOpenHelper {
         return database.insert(TABLE_NAME, null, contentValues);
     }
 
+    public UserModel findUser(String username, String email) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] columns = { COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL };
+        String whereCondition = COLUMN_EMAIL + "=? OR " + COLUMN_USERNAME + "=?";
+        String[] whereArguments = { email, email };
+
+        Cursor cursor = database.query(
+                TABLE_NAME, columns,
+                whereCondition, whereArguments,
+                null, null, null
+        );
+
+        UserModel user = null;
+        try {
+            int idColumnIndex = cursor.getColumnIndex(COLUMN_ID);
+            int usernameColumnIndex = cursor.getColumnIndex(COLUMN_USERNAME);
+            int emailColumnIndex = cursor.getColumnIndex(COLUMN_EMAIL);
+
+            if (cursor.moveToFirst()) {
+                int currentId = cursor.getInt(idColumnIndex);
+                String currentUsername = cursor.getString(usernameColumnIndex);
+                String currentEmail = cursor.getString(emailColumnIndex);
+
+                user = new UserModel(currentUsername, currentEmail);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return user;
+    }
+
+
     public boolean Authentication(String username, String password) {
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] columns = { COLUMN_PASSWORD };
-        String whereCondition = COLUMN_USERNAME + "=?";
-        String[] whereArguments = { username };
+        String[] columns = { COLUMN_ID };
+        String whereCondition = COLUMN_USERNAME + "=? AND " + COLUMN_PASSWORD + "=?";
+        String[] whereArguments = { username, password };
 
         Cursor cursor = database.query(
                 TABLE_NAME, columns,
@@ -113,15 +153,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
 
         boolean result = false;
         try {
-            int passwordColumnIndex = cursor.getColumnIndex(COLUMN_PASSWORD);
-
-            while (cursor.moveToNext()) {
-                String currentPassword = cursor.getString(passwordColumnIndex);
-                if (password.equals(currentPassword)) {
-                    result = true;
-                    break;
-                }
-            }
+            if (cursor.moveToFirst()) result = true;
         } finally {
             cursor.close();
         }
