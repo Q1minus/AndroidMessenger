@@ -7,4 +7,5 @@
     <string name="EmailHint">Email</string>
     <string name="Confirm">Confirm</string>
     <string name="BadUsernameOrPassword">Bad username or password</string>
+    <string name="AddChat">Add chat</string>
 </resources>

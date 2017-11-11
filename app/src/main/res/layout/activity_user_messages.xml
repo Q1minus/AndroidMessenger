@@ -6,4 +6,28 @@
     android:layout_height="match_parent"
     tools:context="com.example.vadim.androidmesseger.UserMessagesActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/ChatList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/layout_bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/AddChatButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/AddChat"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
