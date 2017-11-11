@@ -5,23 +5,12 @@ package com.example.vadim.androidmesseger.models;
  */
 
 public class UserModel {
-    String name, surname;
     String username;
     String email;
 
-    public UserModel(String name, String surname, String username, String email) {
-        this.name = name;
-        this.surname = surname;
+    public UserModel(String username, String email) {
         this.username = username;
         this.email = email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
     }
 
     public String getUsername() {
