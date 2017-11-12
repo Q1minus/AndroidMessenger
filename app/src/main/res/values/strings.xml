@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">AndroidMesseger</string>
+    <string name="app_name">AndroidMessenger</string>
     <string name="AuthorizationLogin">Log in</string>
-    <string name="UsernameHint">Username</string>
     <string name="PasswordHint">Password</string>
-    <string name="Registration">Registration</string>
     <string name="EmailHint">Email</string>
+    <string name="Registration">Registration</string>
     <string name="Confirm">Confirm</string>
     <string name="BadUsernameOrPassword">Bad username or password</string>
     <string name="AddChat">Add chat</string>
+    <string name="UsernameHint">Username</string>
+    <string name="Add">Add</string>
+    <string name="UserNotFound">User not found!</string>
 </resources>

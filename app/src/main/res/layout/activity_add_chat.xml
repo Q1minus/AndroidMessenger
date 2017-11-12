@@ -4,16 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.vadim.androidmesseger.activities.RegisterActivity">
+    tools:context="com.example.vadim.androidmesseger.activities.AddChatActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/UsernameField"
@@ -31,19 +27,11 @@
             android:hint="@string/EmailHint"
             android:inputType="textEmailAddress" />
 
-        <EditText
-            android:id="@+id/PasswordField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/PasswordHint"
-            android:inputType="textPassword" />
-
         <Button
-            android:id="@+id/ConfirmButton"
+            android:id="@+id/AddButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/Confirm" />
+            android:text="@string/Add" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
