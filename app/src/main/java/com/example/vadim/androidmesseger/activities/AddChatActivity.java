@@ -28,8 +28,8 @@ public class AddChatActivity extends AppCompatActivity implements View.OnClickLi
         buttonAdd = findViewById(R.id.AddButton);
         buttonAdd.setOnClickListener(this);
 
-        username = findViewById(R.id.UsernameField);
-        email = findViewById(R.id.EmailField);
+        username = findViewById(R.id.AddChatUsernameField);
+        email = findViewById(R.id.AddChatEmailField);
 
         friendListDBHelper = new FriendListDBHelper(this);
         userDBHelper = new UserDBHelper(this);
@@ -60,10 +60,16 @@ public class AddChatActivity extends AppCompatActivity implements View.OnClickLi
         case R.id.AddButton:
             String stringUsername = username.getText().toString();
             String stringEmail = email.getText().toString();
+            if (stringUsername.isEmpty()) {
+                stringUsername = "null";
+            }
+            if (stringEmail.isEmpty()) {
+                stringEmail = "null";
+            }
 
             UserModel foundUser = userDBHelper.findUser(stringUsername, stringEmail);
             if (foundUser != null) {
-                friendListDBHelper.addFriend(user.getId(), foundUser.getId());
+                long a = friendListDBHelper.addFriend(user.getId(), foundUser.getId());
                 finish();
             }
             else {
