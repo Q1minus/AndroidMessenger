@@ -2,8 +2,13 @@ package com.example.vadim.androidmesseger.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.vadim.androidmesseger.models.UserModel;
+
+import java.util.ArrayList;
 
 /**
  * Created by Vadim Denisov on 05/11/17.
@@ -44,5 +49,32 @@ public class FriendListDBHelper extends SQLiteOpenHelper {
         return database.insert(TABLE_NAME, null, contentValues);
     }
 
+    public ArrayList<Long> getFriendsId(long id) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] columns = { COLUMN_FRIEND_ID };
+        String whereCondition = COLUMN_USER_ID + "=?";
+        String[] whereArguments = { String.valueOf(id) };
+
+        Cursor cursor = database.query(
+                TABLE_NAME, columns,
+                whereCondition, whereArguments,
+                null, null, null
+        );
+
+        ArrayList<Long> friendsId = new ArrayList<>();
+        try {
+            int idFriendColumnIndex = cursor.getColumnIndex(COLUMN_FRIEND_ID);
+
+            while (cursor.moveToNext()) {
+                long currentId = cursor.getInt(idFriendColumnIndex);
+                friendsId.add(currentId);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return friendsId;
+    }
 
 }

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
+import android.util.Log;
 
 import com.example.vadim.androidmesseger.models.UserModel;
 
@@ -109,7 +110,40 @@ public class UserDBHelper extends SQLiteOpenHelper {
 
         String[] columns = { COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL };
         String whereCondition = COLUMN_EMAIL + "=? OR " + COLUMN_USERNAME + "=?";
-        String[] whereArguments = { email, email };
+        String[] whereArguments = { email, username };
+
+
+        Cursor cursor = database.query(
+                TABLE_NAME, columns,
+                whereCondition, whereArguments,
+                null, null, null
+        );
+
+        UserModel user = null;
+        try {
+            if (cursor.moveToFirst()) {
+                int idColumnIndex = cursor.getColumnIndex(COLUMN_ID);
+                int usernameColumnIndex = cursor.getColumnIndex(COLUMN_USERNAME);
+                int emailColumnIndex = cursor.getColumnIndex(COLUMN_EMAIL);
+
+                int currentId = cursor.getInt(idColumnIndex);
+                String currentUsername = cursor.getString(usernameColumnIndex);
+                String currentEmail = cursor.getString(emailColumnIndex);
+
+                user = new UserModel(currentId, currentUsername, currentEmail);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return user;
+    }
+    public UserModel findUser(long id) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] columns = { COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL };
+        String whereCondition = COLUMN_ID + "=?";
+        String[] whereArguments = { String.valueOf(id) };
 
         Cursor cursor = database.query(
                 TABLE_NAME, columns,
