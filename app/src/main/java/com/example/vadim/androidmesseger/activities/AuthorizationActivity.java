@@ -22,8 +22,8 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authorization);
 
-        username = findViewById(R.id.UsernameField);
-        password = findViewById(R.id.PasswordField);
+        username = findViewById(R.id.AuthorizationUsernameField);
+        password = findViewById(R.id.AuthorizationPasswordField);
 
         buttonLogin = findViewById(R.id.LoginButton);
         buttonRegistration = findViewById(R.id.RegistrationButton);

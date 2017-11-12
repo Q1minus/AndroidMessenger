@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/UsernameField"
+            android:id="@+id/RegistrationUsernameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -24,7 +24,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/EmailField"
+            android:id="@+id/RegistrationEmailField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -32,7 +32,7 @@
             android:inputType="textEmailAddress" />
 
         <EditText
-            android:id="@+id/PasswordField"
+            android:id="@+id/RegistrationPasswordField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
