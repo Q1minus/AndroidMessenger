@@ -128,7 +128,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
                 String currentUsername = cursor.getString(usernameColumnIndex);
                 String currentEmail = cursor.getString(emailColumnIndex);
 
-                user = new UserModel(currentUsername, currentEmail);
+                user = new UserModel(currentId, currentUsername, currentEmail);
             }
         } finally {
             cursor.close();
@@ -137,11 +137,10 @@ public class UserDBHelper extends SQLiteOpenHelper {
         return user;
     }
 
-
-    public boolean Authentication(String username, String password) {
+    public UserModel Authentication(String username, String password) {
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] columns = { COLUMN_ID };
+        String[] columns = { COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL  };
         String whereCondition = COLUMN_USERNAME + "=? AND " + COLUMN_PASSWORD + "=?";
         String[] whereArguments = { username, password };
 
@@ -151,13 +150,25 @@ public class UserDBHelper extends SQLiteOpenHelper {
                 null, null, null
         );
 
-        boolean result = false;
+        UserModel user = null;
         try {
-            if (cursor.moveToFirst()) result = true;
+            int idColumnIndex = cursor.getColumnIndex(COLUMN_ID);
+            int usernameColumnIndex = cursor.getColumnIndex(COLUMN_USERNAME);
+            int emailColumnIndex = cursor.getColumnIndex(COLUMN_EMAIL);
+
+            if (cursor.moveToFirst()) {
+                int currentId = cursor.getInt(idColumnIndex);
+                String currentUsername = cursor.getString(usernameColumnIndex);
+                String currentEmail = cursor.getString(emailColumnIndex);
+
+                user = new UserModel(currentId, currentUsername, currentEmail);
+            }
         } finally {
             cursor.close();
         }
 
-        return result;
+        return user;
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.vadim.androidmesseger.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -31,6 +32,16 @@ public class FriendListDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //TODO Write upgrade code
+    }
+
+    public long addFriend(long userId, long friendId) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_USER_ID, userId);
+        contentValues.put(COLUMN_FRIEND_ID, friendId);
+
+        return database.insert(TABLE_NAME, null, contentValues);
     }
 
 
