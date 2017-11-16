@@ -1,5 +1,6 @@
 package com.example.vadim.androidmesseger.activities;
 
+import android.app.ListActivity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,10 +17,9 @@ import com.example.vadim.androidmesseger.models.UserModel;
 import java.util.ArrayList;
 
 
-public class UserMessagesActivity extends AppCompatActivity implements View.OnClickListener {
+public class UserMessagesActivity extends ListActivity implements View.OnClickListener {
     Button buttonAddChat;
     UserAdapter userAdapter;
-    ListView chatList;
 
     FriendListDBHelper friendListDBHelper;
     UserDBHelper userDBHelper;
@@ -32,7 +32,6 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_messages);
 
-        chatList = findViewById(R.id.ChatList);
         buttonAddChat = findViewById(R.id.AddChatButton);
         buttonAddChat.setOnClickListener(this);
 
@@ -43,7 +42,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         usersFriends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
 
         userAdapter = new UserAdapter(this, usersFriends);
-        chatList.setAdapter(userAdapter);
+        setListAdapter(userAdapter);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
 
         usersFriends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
         userAdapter = new UserAdapter(this, usersFriends);
-        chatList.setAdapter(userAdapter);
+        setListAdapter(userAdapter);
     }
 
     @Override
