@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class FriendListDBHelper extends SQLiteOpenHelper {
     /* Database constants */
-    public static final String DATABASE_NAME = "AndroidMessenger.db";
+    public static final String DATABASE_NAME = "FriendList.db";
     public static final int DATABASE_VERSION = 1;
     /* Table and column constants */
     public static final String TABLE_NAME = "FriendList";
@@ -29,8 +29,9 @@ public class FriendListDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = String.format("create table %s (%s integer, %s integer);",
-                TABLE_NAME, COLUMN_USER_ID, COLUMN_FRIEND_ID);
+        String sql = "create table " + TABLE_NAME + "(" +
+                COLUMN_USER_ID +    " integer, " +
+                COLUMN_FRIEND_ID +  " integer);";
         db.execSQL(sql);
     }
 

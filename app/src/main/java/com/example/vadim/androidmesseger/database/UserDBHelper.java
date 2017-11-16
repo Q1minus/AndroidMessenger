@@ -18,7 +18,7 @@ import java.util.Currency;
 
 public class UserDBHelper extends SQLiteOpenHelper {
     /* Database constants */
-    public static final String DATABASE_NAME = "AndroidMessenger.db";
+    public static final String DATABASE_NAME = "User.db";
     public static final int DATABASE_VERSION = 1;
     /* Table and column constants */
     public static final String TABLE_NAME = "User";
@@ -38,8 +38,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
                 COLUMN_ID +             " integer primary key autoincrement, " +
                 COLUMN_USERNAME +       " text, " +
                 COLUMN_EMAIL +          " text, " +
-                COLUMN_PASSWORD +       " text, " +
-                COLUMN_FRIEND_LIST_ID + " integer);";
+                COLUMN_PASSWORD +       " text);";
         db.execSQL(sql);
     }
 
@@ -173,7 +172,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
 
     public UserModel Authentication(String username, String password) {
         SQLiteDatabase database = this.getReadableDatabase();
-
+        Log.d("OK", "kk");
         String[] columns = { COLUMN_ID, COLUMN_USERNAME, COLUMN_EMAIL  };
         String whereCondition = COLUMN_USERNAME + "=? AND " + COLUMN_PASSWORD + "=?";
         String[] whereArguments = { username, password };
