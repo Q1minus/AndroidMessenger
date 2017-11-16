@@ -18,16 +18,21 @@ import java.util.ArrayList;
 
 public class UserMessagesActivity extends AppCompatActivity implements View.OnClickListener {
     Button buttonAddChat;
-    UserModel currentUser;
     UserAdapter userAdapter;
+    ListView chatList;
+
     FriendListDBHelper friendListDBHelper;
     UserDBHelper userDBHelper;
+
+    UserModel currentUser;
+    ArrayList<UserModel> usersFriends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_messages);
 
+        chatList = findViewById(R.id.ChatList);
         buttonAddChat = findViewById(R.id.AddChatButton);
         buttonAddChat.setOnClickListener(this);
 
@@ -35,18 +40,19 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         userDBHelper = new UserDBHelper(this);
 
         currentUser = new UserModel(getIntent());
+        usersFriends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
 
-        ArrayList<UserModel> friends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
-        userAdapter = new UserAdapter(this, friends );
-
-        ListView chatList = findViewById(R.id.ChatList);
+        userAdapter = new UserAdapter(this, usersFriends);
         chatList.setAdapter(userAdapter);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onRestart() {
+        super.onRestart();
 
+        usersFriends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
+        userAdapter = new UserAdapter(this, usersFriends);
+        chatList.setAdapter(userAdapter);
     }
 
     @Override
