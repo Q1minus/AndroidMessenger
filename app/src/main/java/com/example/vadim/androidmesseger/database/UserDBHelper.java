@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.example.vadim.androidmesseger.models.UserModel;
 
+import java.util.ArrayList;
 import java.util.Currency;
 
 /**
@@ -203,5 +204,12 @@ public class UserDBHelper extends SQLiteOpenHelper {
         return user;
     }
 
+    public ArrayList<UserModel> getUsersFriend(UserModel user, FriendListDBHelper friendListDBHelper) {
+        ArrayList<UserModel> friends = new ArrayList<>();
+        for (Long id : friendListDBHelper.getFriendsId(user.getId())) {
+            friends.add(this.findUser(id));
+        }
+        return friends;
+    }
 
 }

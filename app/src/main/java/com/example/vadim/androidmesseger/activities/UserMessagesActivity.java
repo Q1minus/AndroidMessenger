@@ -3,7 +3,6 @@ package com.example.vadim.androidmesseger.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 
 public class UserMessagesActivity extends AppCompatActivity implements View.OnClickListener {
     Button buttonAddChat;
-    UserModel user;
+    UserModel currentUser;
     UserAdapter userAdapter;
     FriendListDBHelper friendListDBHelper;
     UserDBHelper userDBHelper;
@@ -35,18 +34,19 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         friendListDBHelper = new FriendListDBHelper(this);
         userDBHelper = new UserDBHelper(this);
 
-        user = new UserModel(getIntent());
+        currentUser = new UserModel(getIntent());
 
-        // TODO Take out this logic
-        ArrayList<UserModel> users = new ArrayList<>();
-        for (Long id : friendListDBHelper.getFriendsId(user.getId())) {
-            users.add(userDBHelper.findUser(id));
-        }
-
-        userAdapter = new UserAdapter(this, users);
+        ArrayList<UserModel> friends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
+        userAdapter = new UserAdapter(this, friends );
 
         ListView chatList = findViewById(R.id.ChatList);
         chatList.setAdapter(userAdapter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
     }
 
     @Override
@@ -60,7 +60,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
 
     private void startAddChatActivity() {
         Intent intent = new Intent(this, AddChatActivity.class);
-        user.putExtraUser(intent);
+        currentUser.putExtraUser(intent);
         startActivity(intent);
     }
 }
