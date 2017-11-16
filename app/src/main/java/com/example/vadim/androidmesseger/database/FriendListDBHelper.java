@@ -78,4 +78,12 @@ public class FriendListDBHelper extends SQLiteOpenHelper {
         return friendsId;
     }
 
+    public int removeFriend(long userId, long friendId) {
+        SQLiteDatabase database = getWritableDatabase();
+
+        String whereCondition = COLUMN_USER_ID + "=? AND " + COLUMN_FRIEND_ID + "=?";
+        String[] whereArguments = { String.valueOf(userId), String.valueOf(friendId) };
+
+        return database.delete(TABLE_NAME, whereCondition, whereArguments);
+    }
 }
