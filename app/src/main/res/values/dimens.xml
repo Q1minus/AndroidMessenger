@@ -2,4 +2,6 @@
 <resources>
     <dimen name="UserPhotoWidth">64dp</dimen>
     <dimen name="UserPhotoHeight">64dp</dimen>
+    <dimen name="DetailUserPhotoWidth">128dp</dimen>
+    <dimen name="DetailUserPhotoHeight">128dp</dimen>
 </resources>

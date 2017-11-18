@@ -14,20 +14,24 @@ import com.example.vadim.androidmesseger.R;
 import com.example.vadim.androidmesseger.adapters.UserAdapter;
 import com.example.vadim.androidmesseger.database.FriendListDBHelper;
 import com.example.vadim.androidmesseger.database.UserDBHelper;
+import com.example.vadim.androidmesseger.fragments.UserInfoFragment;
 import com.example.vadim.androidmesseger.models.UserModel;
 
 import java.util.ArrayList;
 
 
 public class UserMessagesActivity extends ListActivity implements View.OnClickListener{
-    private static final String CONTEXT_MENU_ITEM_VIEW      = "View";
-    private static final String CONTEXT_MENU_ITEM_CALL      = "Call";
-    private static final String CONTEXT_MENU_ITEM_MESSAGE   = "Message";
-    private static final String CONTEXT_MENU_ITEM_EDIT      = "Edit";
-    private static final String CONTEXT_MENU_ITEM_REMOVE    = "Remove";
+    static final String FRAGMENT_TAG                = "User Info";
+    static final String CONTEXT_MENU_ITEM_VIEW      = "View";
+    static final String CONTEXT_MENU_ITEM_CALL      = "Call";
+    static final String CONTEXT_MENU_ITEM_MESSAGE   = "Message";
+    static final String CONTEXT_MENU_ITEM_EDIT      = "Edit";
+    static final String CONTEXT_MENU_ITEM_REMOVE    = "Remove";
+    static final String KEY_FRIEND_ID               = "friendId";
 
     Button buttonAddChat;
     UserAdapter userAdapter;
+    UserInfoFragment userInfoFragment;
 
     FriendListDBHelper friendListDBHelper;
     UserDBHelper userDBHelper;
@@ -39,6 +43,8 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_messages);
+
+        userInfoFragment = new UserInfoFragment();
 
         buttonAddChat = findViewById(R.id.AddChatButton);
         buttonAddChat.setOnClickListener(this);
@@ -83,13 +89,17 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item){
+    public boolean onContextItemSelected(MenuItem item) {
         boolean result = true;
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo )item.getMenuInfo();
 
         switch (item.getTitle().toString()) {
         case CONTEXT_MENU_ITEM_VIEW:
-            // TODO Show in Fragment info about friend
+            Bundle bundle = new Bundle();
+            bundle.putLong(KEY_FRIEND_ID, info.id);
+
+            userInfoFragment.setArguments(bundle);
+            userInfoFragment.show(getFragmentManager(), FRAGMENT_TAG);
             break;
         case CONTEXT_MENU_ITEM_CALL:
             // TODO Call friend
@@ -105,12 +115,12 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
             updateChatList();
             break;
         default:
-            result = false;
+            result =  super.onContextItemSelected(item);
             break;
         }
-
         return result;
     }
+
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
