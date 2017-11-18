@@ -12,4 +12,5 @@
     <string name="UserNotFound">User not found!</string>
     <string name="DefaultUsername">SimpleUsername</string>
     <string name="DefaultEmail">default@email.com</string>
+    <string name="NullPointerFriends">Cannot find friends</string>
 </resources>

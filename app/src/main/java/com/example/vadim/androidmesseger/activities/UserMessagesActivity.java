@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
 import com.example.vadim.androidmesseger.adapters.UserAdapter;
@@ -21,13 +22,13 @@ import java.util.ArrayList;
 
 
 public class UserMessagesActivity extends ListActivity implements View.OnClickListener{
-    static final String FRAGMENT_TAG                = "User Info";
+    static final String FRAGMENT_TAG                = "user_info";
+
     static final String CONTEXT_MENU_ITEM_VIEW      = "View";
     static final String CONTEXT_MENU_ITEM_CALL      = "Call";
     static final String CONTEXT_MENU_ITEM_MESSAGE   = "Message";
     static final String CONTEXT_MENU_ITEM_EDIT      = "Edit";
     static final String CONTEXT_MENU_ITEM_REMOVE    = "Remove";
-    static final String KEY_FRIEND_ID               = "friendId";
 
     Button buttonAddChat;
     UserAdapter userAdapter;
@@ -58,7 +59,6 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
         userAdapter = new UserAdapter(this, usersFriends);
         this.setListAdapter(userAdapter);
         updateChatList();
-
 
         this.registerForContextMenu(this.getListView());
     }
@@ -96,7 +96,9 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
         switch (item.getTitle().toString()) {
         case CONTEXT_MENU_ITEM_VIEW:
             Bundle bundle = new Bundle();
-            bundle.putLong(KEY_FRIEND_ID, info.id);
+
+            bundle.putInt(UserInfoFragment.KEY_FRIEND_POSITION, info.position);
+            bundle.putLongArray(UserInfoFragment.KEY_FRIEND_LIST_IDS, UserModel.getIds(usersFriends));
 
             userInfoFragment.setArguments(bundle);
             userInfoFragment.show(getFragmentManager(), FRAGMENT_TAG);
@@ -115,7 +117,7 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
             updateChatList();
             break;
         default:
-            result =  super.onContextItemSelected(item);
+            result = super.onContextItemSelected(item);
             break;
         }
         return result;
