@@ -4,6 +4,9 @@ package com.example.vadim.androidmesseger.models;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * Created by Vadim Denisov on 11/11/17.
  */
@@ -42,4 +45,19 @@ public class UserModel {
         intent.putExtra(USERNAME_KEY, username);
         intent.putExtra(EMAIL_KEY, email);
     }
+
+    public static long[] getIds(Iterable<UserModel> users) {
+        ArrayList<UserModel> l = new ArrayList<>();
+
+        Iterator<UserModel> iter = users.iterator();
+        while (iter.hasNext())
+            l.add(iter.next());
+
+        long[] result = new long[l.size()];
+        for (int i = 0; i < l.size(); i++)
+            result[i] = l.get(i).getId();
+
+        return result;
+    }
+
 }
