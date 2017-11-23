@@ -17,8 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.AuthorizationActivity" />
-        <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.SignInActivity" />
+        <activity android:name=".activities.SignUpActivity" />
         <activity android:name=".activities.UserMessagesActivity" />
         <activity android:name=".activities.AddChatActivity"></activity>
     </application>

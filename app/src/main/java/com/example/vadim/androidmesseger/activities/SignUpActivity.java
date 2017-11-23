@@ -12,24 +12,24 @@ import com.example.vadim.androidmesseger.R;
 import com.example.vadim.androidmesseger.database.UserDBHelper;
 
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener{
     private static final int PASSWORD_MIN_LENGTH = 6;
 
-    private EditText username, email, password;
-    private Button buttonConfirm;
+    private EditText usernameEdit, emailEdit, passwordEdit;
+    private Button confirmButton;
     private UserDBHelper userDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_sign_up);
 
-        username = findViewById(R.id.RegistrationUsernameField);
-        email = findViewById(R.id.RegistrationEmailField);
-        password = findViewById(R.id.RegistrationPasswordField);
+        usernameEdit = findViewById(R.id.RegistrationUsernameField);
+        emailEdit = findViewById(R.id.RegistrationEmailField);
+        passwordEdit = findViewById(R.id.RegistrationPasswordField);
 
-        buttonConfirm = findViewById(R.id.ConfirmButton);
-        buttonConfirm.setOnClickListener(this);
+        confirmButton = findViewById(R.id.ConfirmButton);
+        confirmButton.setOnClickListener(this);
 
         userDbHelper = new UserDBHelper(this);
     }
@@ -38,25 +38,25 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString("username", username.getText().toString());
-        outState.putString("email", email.getText().toString());
-        outState.putString("password", password.getText().toString());
+        outState.putString("username", usernameEdit.getText().toString());
+        outState.putString("email", emailEdit.getText().toString());
+        outState.putString("password", passwordEdit.getText().toString());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
-        username.setText(savedState.getString("username"));
-        email.setText(savedState.getString("email"));
-        password.setText(savedState.getString("password"));
+        usernameEdit.setText(savedState.getString("username"));
+        emailEdit.setText(savedState.getString("email"));
+        passwordEdit.setText(savedState.getString("password"));
     }
 
     @Override
     public void onClick(View view) {
-        String stringUsername = username.getText().toString();
-        String stringEmail = email.getText().toString();
-        String stringPassword = password.getText().toString();
+        String stringUsername = usernameEdit.getText().toString();
+        String stringEmail = emailEdit.getText().toString();
+        String stringPassword = passwordEdit.getText().toString();
 
         switch (view.getId()) {
         case R.id.ConfirmButton:
@@ -65,17 +65,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 String toastMessage = "Bad username!";
                 Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
             }
-            if (password.length() < PASSWORD_MIN_LENGTH) {
+            if (passwordEdit.length() < PASSWORD_MIN_LENGTH) {
                 String toastMessage = String.format("Password must be long that %d symbols", PASSWORD_MIN_LENGTH);
                 Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
             }
 
             /* Find username and email in database */
             if (userDbHelper.isExistsUsername(stringUsername)) {
-                String toastMessage = String.format("User with username '%s' already exists.", username);
+                String toastMessage = String.format("User with username '%s' already exists.", usernameEdit);
                 Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
             } else if (userDbHelper.isExistsUsername(stringEmail)) {
-                String toastMessage = String.format("User with email '%s' already exists.", email);
+                String toastMessage = String.format("User with email '%s' already exists.", emailEdit);
                 Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
             } else {
                 long newRowId = userDbHelper.addUser(stringUsername, stringEmail, stringPassword);

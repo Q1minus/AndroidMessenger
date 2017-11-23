@@ -12,7 +12,7 @@ import com.example.vadim.androidmesseger.R;
 import com.example.vadim.androidmesseger.database.UserDBHelper;
 import com.example.vadim.androidmesseger.models.UserModel;
 
-public class AuthorizationActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText username, password;
     private Button buttonLogin, buttonRegistration;
     private UserDBHelper userDbHelper;
@@ -20,7 +20,7 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_authorization);
+        setContentView(R.layout.activity_sign_in);
 
         username = findViewById(R.id.AuthorizationUsernameField);
         password = findViewById(R.id.AuthorizationPasswordField);
@@ -78,7 +78,7 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
     }
 
     private void startRegisterActivity() {
-        Intent intent = new Intent(this, RegisterActivity.class);
+        Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
 }
