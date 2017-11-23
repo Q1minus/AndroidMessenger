@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
@@ -17,21 +18,22 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
+
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
     EditText emailEdit, passwordEdit;
     Button loginButton, registrationButton;
+    ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        progressBar = findViewById(R.id.progressBar);
         emailEdit = findViewById(R.id.AuthorizationUsernameField);
         passwordEdit = findViewById(R.id.AuthorizationPasswordField);
-
         loginButton = findViewById(R.id.LoginButton);
         registrationButton = findViewById(R.id.RegistrationButton);
 
@@ -78,33 +80,38 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
+        progressBar.setVisibility(View.VISIBLE);
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(SignInActivity.this, "Authentication success!.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(SignInActivity.this, UserMessagesActivity.class);
+                            SignInActivity.this.startActivity(intent);
                         } else {
                             Toast.makeText(SignInActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
+
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }
     
     private boolean validateForm() {
         boolean valid = true;
-
         String email = emailEdit.getText().toString();
+        String password = passwordEdit.getText().toString();
+
         if (TextUtils.isEmpty(email)) {
-            emailEdit.setError("Required.");
+            emailEdit.setError("Email required!");
             valid = false;
         } else {
             emailEdit.setError(null);
         }
 
-        String password = passwordEdit.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            passwordEdit.setError("Required.");
+            passwordEdit.setError("Password required!");
             valid = false;
         } else {
             passwordEdit.setError(null);
@@ -114,3 +121,4 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 }
+

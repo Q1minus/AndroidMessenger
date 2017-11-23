@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener{
     EditText emailEdit, passwordEdit;
     Button confirmButton;
+    ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
 
@@ -27,10 +29,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        progressBar = findViewById(R.id.progressBar);
         emailEdit = findViewById(R.id.RegistrationEmailField);
         passwordEdit = findViewById(R.id.RegistrationPasswordField);
-
         confirmButton = findViewById(R.id.sign_up_button);
+
         confirmButton.setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
@@ -52,7 +55,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         passwordEdit.setText(savedState.getString("password"));
     }
 
-
     @Override
     public void onClick(View view) {
         String email = emailEdit.getText().toString().trim();
@@ -70,15 +72,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
+        progressBar.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(SignUpActivity.this, R.string.sign_up_success, Toast.LENGTH_LONG).show();
+                            finish();
                         } else {
                             Toast.makeText(SignUpActivity.this, R.string.sign_up_failed, Toast.LENGTH_LONG).show();
                         }
+
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }
