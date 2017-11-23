@@ -19,26 +19,26 @@
             android:id="@+id/AuthorizationUsernameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/UsernameHint" />
+            android:hint="@string/hint_email" />
 
         <EditText
             android:id="@+id/AuthorizationPasswordField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/PasswordHint"
+            android:hint="@string/hint_password"
             android:inputType="textPassword" />
 
         <Button
             android:id="@+id/LoginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/AuthorizationLogin" />
+            android:text="@string/sign_in" />
 
         <Button
             android:id="@+id/RegistrationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/Registration" />
+            android:text="@string/sign_up" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

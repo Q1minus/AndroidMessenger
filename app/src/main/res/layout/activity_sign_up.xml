@@ -16,19 +16,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/RegistrationUsernameField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/UsernameHint"
-            android:inputType="textPersonName" />
-
-        <EditText
             android:id="@+id/RegistrationEmailField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/EmailHint"
+            android:hint="@string/hint_email"
             android:inputType="textEmailAddress" />
 
         <EditText
@@ -36,14 +28,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/PasswordHint"
+            android:hint="@string/hint_password"
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/ConfirmButton"
+            android:id="@+id/sign_up_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/Confirm" />
+            android:text="@string/confirm" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

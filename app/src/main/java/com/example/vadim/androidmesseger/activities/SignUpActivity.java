@@ -1,44 +1,45 @@
 package com.example.vadim.androidmesseger.activities;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Patterns;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
-import com.example.vadim.androidmesseger.database.UserDBHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener{
-    private static final int PASSWORD_MIN_LENGTH = 6;
+    EditText emailEdit, passwordEdit;
+    Button confirmButton;
 
-    private EditText usernameEdit, emailEdit, passwordEdit;
-    private Button confirmButton;
-    private UserDBHelper userDbHelper;
+    private FirebaseAuth mAuth;
 
-    @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        usernameEdit = findViewById(R.id.RegistrationUsernameField);
         emailEdit = findViewById(R.id.RegistrationEmailField);
         passwordEdit = findViewById(R.id.RegistrationPasswordField);
 
-        confirmButton = findViewById(R.id.ConfirmButton);
+        confirmButton = findViewById(R.id.sign_up_button);
         confirmButton.setOnClickListener(this);
 
-        userDbHelper = new UserDBHelper(this);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString("username", usernameEdit.getText().toString());
         outState.putString("email", emailEdit.getText().toString());
         outState.putString("password", passwordEdit.getText().toString());
     }
@@ -47,47 +48,60 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     protected void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
-        usernameEdit.setText(savedState.getString("username"));
         emailEdit.setText(savedState.getString("email"));
         passwordEdit.setText(savedState.getString("password"));
     }
 
+
     @Override
     public void onClick(View view) {
-        String stringUsername = usernameEdit.getText().toString();
-        String stringEmail = emailEdit.getText().toString();
-        String stringPassword = passwordEdit.getText().toString();
+        String email = emailEdit.getText().toString().trim();
+        String password = passwordEdit.getText().toString().trim();
 
         switch (view.getId()) {
-        case R.id.ConfirmButton:
-            /* Check email and password */
-            if (!Patterns.EMAIL_ADDRESS.matcher(stringEmail).matches()) {
-                String toastMessage = "Bad username!";
-                Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
-            }
-            if (passwordEdit.length() < PASSWORD_MIN_LENGTH) {
-                String toastMessage = String.format("Password must be long that %d symbols", PASSWORD_MIN_LENGTH);
-                Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
-            }
-
-            /* Find username and email in database */
-            if (userDbHelper.isExistsUsername(stringUsername)) {
-                String toastMessage = String.format("User with username '%s' already exists.", usernameEdit);
-                Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
-            } else if (userDbHelper.isExistsUsername(stringEmail)) {
-                String toastMessage = String.format("User with email '%s' already exists.", emailEdit);
-                Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
-            } else {
-                long newRowId = userDbHelper.addUser(stringUsername, stringEmail, stringPassword);
-
-                if (newRowId == -1) {
-                    Toast.makeText(getApplicationContext(),"Insert to database error!", Toast.LENGTH_SHORT).show();
-                } else {
-                    finish();
-                }
-            }
+        case R.id.sign_up_button:
+            signUp(email, password);
             break;
         }
     }
 
+    private void signUp(String email, String password) {
+        if (!validateForm()) {
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SignUpActivity.this, R.string.sign_up_success, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(SignUpActivity.this, R.string.sign_up_failed, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email = emailEdit.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            emailEdit.setError("Required.");
+            valid = false;
+        } else {
+            emailEdit.setError(null);
+        }
+
+        String password = passwordEdit.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            passwordEdit.setError("Required.");
+            valid = false;
+        } else {
+            passwordEdit.setError(null);
+        }
+
+        return valid;
+    }
 }
