@@ -6,19 +6,19 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
 import com.example.vadim.androidmesseger.adapters.UserAdapter;
-import com.example.vadim.androidmesseger.database.FriendListDBHelper;
-import com.example.vadim.androidmesseger.database.UserDBHelper;
 import com.example.vadim.androidmesseger.fragments.UserInfoFragment;
 import com.example.vadim.androidmesseger.models.UserModel;
-
-import java.util.ArrayList;
+import com.firebase.ui.database.FirebaseListOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 
 public class UserMessagesActivity extends ListActivity implements View.OnClickListener{
@@ -30,15 +30,16 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
     static final String CONTEXT_MENU_ITEM_EDIT      = "Edit";
     static final String CONTEXT_MENU_ITEM_REMOVE    = "Remove";
 
+    static final String FRIEND_KEY      = "Friend";
+
     Button buttonAddChat;
     UserAdapter userAdapter;
     UserInfoFragment userInfoFragment;
+    FirebaseUser user;
 
-    FriendListDBHelper friendListDBHelper;
-    UserDBHelper userDBHelper;
+    private FirebaseAuth mAuth;
+    private DatabaseReference myRef;
 
-    UserModel currentUser;
-    ArrayList<UserModel> usersFriends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,23 +51,21 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
         buttonAddChat = findViewById(R.id.AddChatButton);
         buttonAddChat.setOnClickListener(this);
 
-        friendListDBHelper = new FriendListDBHelper(this);
-        userDBHelper = new UserDBHelper(this);
+        mAuth = FirebaseAuth.getInstance();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        user = mAuth.getCurrentUser();
 
-        currentUser = new UserModel(getIntent());
-        usersFriends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
+        Query query = myRef.child(user.getUid()).child(FRIEND_KEY);
 
-        userAdapter = new UserAdapter(this, usersFriends);
-        this.setListAdapter(userAdapter);
-        updateChatList();
+        FirebaseListOptions<UserModel> options = new FirebaseListOptions.Builder<UserModel>()
+                .setQuery(query, UserModel.class)
+                .setLayout(R.layout.user_item)
+                .build();
 
-        this.registerForContextMenu(this.getListView());
-    }
+        userAdapter = new UserAdapter(options);
 
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        updateChatList();
+        setListAdapter(userAdapter);
+        registerForContextMenu(getListView());
     }
 
     @Override
@@ -83,7 +82,8 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
         case R.id.AddChatButton:
-            startAddChatActivity();
+            Intent intent = new Intent(this, AddChatActivity.class);
+            startActivity(intent);
             break;
         }
     }
@@ -91,17 +91,11 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         boolean result = true;
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo )item.getMenuInfo();
 
         switch (item.getTitle().toString()) {
         case CONTEXT_MENU_ITEM_VIEW:
-            Bundle bundle = new Bundle();
-
-            bundle.putInt(UserInfoFragment.KEY_FRIEND_POSITION, info.position);
-            bundle.putLongArray(UserInfoFragment.KEY_FRIEND_LIST_IDS, UserModel.getIds(usersFriends));
-
-            userInfoFragment.setArguments(bundle);
-            userInfoFragment.show(getFragmentManager(), FRAGMENT_TAG);
+            //userInfoFragment.setArguments(bundle);
+            //userInfoFragment.show(getFragmentManager(), FRAGMENT_TAG);
             break;
         case CONTEXT_MENU_ITEM_CALL:
             // TODO Call friend
@@ -113,8 +107,7 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
             // TODO Edit friend's info
             break;
         case CONTEXT_MENU_ITEM_REMOVE:
-            friendListDBHelper.removeFriend(currentUser.getId(), info.id);
-            updateChatList();
+            // TODO Remove from friend list
             break;
         default:
             result = super.onContextItemSelected(item);
@@ -127,18 +120,6 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         // TODO Open ChatActivity
-    }
-
-    private void updateChatList() {
-        usersFriends = userDBHelper.getUsersFriend(currentUser, friendListDBHelper);
-        userAdapter = new UserAdapter(this, usersFriends);
-        setListAdapter(userAdapter);
-    }
-
-    private void startAddChatActivity() {
-        Intent intent = new Intent(this, AddChatActivity.class);
-        currentUser.putExtraUser(intent);
-        startActivity(intent);
     }
 
 }
