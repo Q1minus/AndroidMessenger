@@ -66,11 +66,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         switch (view.getId()){
         case R.id.LoginButton:
             signIn(username, password);
-
-            if (mAuth.getCurrentUser() != null) {
-                Intent intent = new Intent(this, UserMessagesActivity.class);
-                startActivity(intent);
-            }
             break;
         case R.id.RegistrationButton:
             Intent intent = new Intent(this, SignUpActivity.class);
