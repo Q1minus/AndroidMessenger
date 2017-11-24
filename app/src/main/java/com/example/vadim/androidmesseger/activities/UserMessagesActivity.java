@@ -1,27 +1,32 @@
 package com.example.vadim.androidmesseger.activities;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.vadim.androidmesseger.R;
 import com.example.vadim.androidmesseger.adapters.UserAdapter;
 import com.example.vadim.androidmesseger.fragments.UserInfoFragment;
 import com.example.vadim.androidmesseger.models.UserModel;
-import com.firebase.ui.database.FirebaseListOptions;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 
-public class UserMessagesActivity extends ListActivity implements View.OnClickListener{
+public class UserMessagesActivity extends AppCompatActivity implements View.OnClickListener{
     static final String FRAGMENT_TAG                = "user_info";
 
     static final String CONTEXT_MENU_ITEM_VIEW      = "View";
@@ -30,9 +35,10 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
     static final String CONTEXT_MENU_ITEM_EDIT      = "Edit";
     static final String CONTEXT_MENU_ITEM_REMOVE    = "Remove";
 
-    static final String FRIEND_KEY      = "Friend";
-
     Button buttonAddChat;
+    TextView emailView;
+    ListView listView;
+
     UserAdapter userAdapter;
     UserInfoFragment userInfoFragment;
     FirebaseUser user;
@@ -47,25 +53,23 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
         setContentView(R.layout.activity_user_messages);
 
         userInfoFragment = new UserInfoFragment();
-
-        buttonAddChat = findViewById(R.id.AddChatButton);
-        buttonAddChat.setOnClickListener(this);
-
         mAuth = FirebaseAuth.getInstance();
         myRef = FirebaseDatabase.getInstance().getReference();
         user = mAuth.getCurrentUser();
 
-        Query query = myRef.child(user.getUid()).child(FRIEND_KEY);
+        buttonAddChat = findViewById(R.id.AddChatButton);
+        emailView = findViewById(R.id.current_email);
+        listView = findViewById(R.id.chat_list);
 
-        FirebaseListOptions<UserModel> options = new FirebaseListOptions.Builder<UserModel>()
-                .setQuery(query, UserModel.class)
-                .setLayout(R.layout.user_item)
-                .build();
+        buttonAddChat.setOnClickListener(this);
 
-        userAdapter = new UserAdapter(options);
+        emailView.setText(user.getEmail());
 
-        setListAdapter(userAdapter);
-        registerForContextMenu(getListView());
+        Query query = myRef.child("Users").child(user.getUid()).child("friends");
+        userAdapter = new UserAdapter(this, String.class, R.layout.user_item, query);
+
+        listView.setAdapter(userAdapter );
+        registerForContextMenu(listView);
     }
 
     @Override
@@ -116,10 +120,10 @@ public class UserMessagesActivity extends ListActivity implements View.OnClickLi
         return result;
     }
 
-    @Override
+    /*@Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         // TODO Open ChatActivity
-    }
+    }*/
 
 }
