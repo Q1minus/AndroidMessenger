@@ -5,14 +5,19 @@ package com.example.vadim.androidmesseger.models;
  */
 
 public class UserModel {
-    String email;
+    public String id;
+    public String email;
 
     public UserModel() { }
 
-    public UserModel(String email) {
+    public UserModel(String id, String email) {
         this.email = email;
+        this.id = id;
     }
 
+    public String getId() {
+        return id;
+    }
     public String getEmail() {
         return email;
     }
