@@ -15,6 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener{
@@ -23,6 +26,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference myRef;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         confirmButton.setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
+        myRef = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -79,6 +84,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(SignUpActivity.this, R.string.sign_up_success, Toast.LENGTH_LONG).show();
+
+                            FirebaseUser user =  mAuth.getCurrentUser();
+                            if (user != null) {
+                                myRef.child("Users").child(user.getUid()).child("id").setValue(user.getUid());
+                                myRef.child("Users").child(user.getUid()).child("email").setValue(user.getEmail());
+                            }
                             finish();
                         } else {
                             Toast.makeText(SignUpActivity.this, R.string.sign_up_failed, Toast.LENGTH_LONG).show();
