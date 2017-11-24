@@ -12,19 +12,11 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/AddChatUsernameField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/UsernameHint"
-            android:inputType="textPersonName" />
-
-        <EditText
             android:id="@+id/AddChatEmailField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/EmailHint"
+            android:hint="@string/hint_email"
             android:inputType="textEmailAddress" />
 
         <Button
