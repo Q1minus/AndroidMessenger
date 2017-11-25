@@ -2,6 +2,7 @@ package com.example.vadim.androidmesseger.fragments;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -9,11 +10,18 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
-import com.example.vadim.androidmesseger.database.UserDBHelper;
-import com.example.vadim.androidmesseger.models.UserModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -24,33 +32,26 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
     public static final int MIN_DISTANCE           = 150;
 
     ImageView friendsPhoto;
-    TextView friendsUsername, friendsEmail;
-    UserDBHelper userDBHelper;
+    TextView friendsEmail;
 
-    ArrayList<Long> usersFriendIds;
-    int currentFriendPosition;
-    UserModel currentFriend;
-    float x1, x2;
+    FirebaseUser user;
+    private float x1, x2;
+    private ArrayList<String> friendsUid;
+    private int position;
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference myRef;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        userDBHelper = new UserDBHelper(this.getActivity());
-        usersFriendIds = new ArrayList<>();
-        long[] ids = getArguments().getLongArray(KEY_FRIEND_LIST_IDS);
-        currentFriendPosition = getArguments().getInt(KEY_FRIEND_POSITION);
+        position = getArguments().getInt("position");
+        friendsUid = getArguments().getStringArrayList("uids");
 
-        if (ids != null) {
-            for (long id : ids)
-                usersFriendIds.add(id);
-        } else {
-            Toast.makeText(getActivity().getApplicationContext(), R.string.NullPointerFriends, Toast.LENGTH_LONG).show();
-            getActivity().onBackPressed();
-        }
-
-        long currentFriendId = usersFriendIds.get(currentFriendPosition);
-        currentFriend = userDBHelper.findUser(currentFriendId);
+        mAuth = FirebaseAuth.getInstance();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        user = mAuth.getCurrentUser();
     }
 
     @Override
@@ -58,11 +59,18 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
         View view = inflater.inflate(R.layout.fragment_user_info, null);
 
         friendsPhoto = view.findViewById(R.id.Photo);
-        friendsUsername = view.findViewById(R.id.Username);
         friendsEmail = view.findViewById(R.id.Email);
 
-        friendsUsername.setText(currentFriend.getUsername());
-        friendsEmail.setText(currentFriend.getEmail());
+        myRef.child("Users").child(friendsUid.get(position)).child("email")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        friendsEmail.setText(dataSnapshot.getValue(String.class));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) { }
+                });
 
         view.setOnTouchListener(this);
         return view;
@@ -76,6 +84,7 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
 
         Window window = this.getDialog().getWindow();
         window.setLayout(view.getWidth(), view.getHeight()/2);
+
     }
 
     @Override
@@ -91,17 +100,17 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
             if (Math.abs(deltaX) > MIN_DISTANCE) {
                 /* Right swipe */
                 if (deltaX > 0) {
-                    currentFriendPosition++;
-                    if (currentFriendPosition >= usersFriendIds.size())
-                        currentFriendPosition = 0;
+                    //currentFriendPosition++;
+                    //if (currentFriendPosition >= usersFriendIds.size())
+                    //    currentFriendPosition = 0;
                 }
                 /* Left swipe */
                 else if (deltaX < 0) {
-                    currentFriendPosition--;
-                    if (currentFriendPosition < 0)
-                        currentFriendPosition = usersFriendIds.size()-1;
+                    //currentFriendPosition--;
+                    //if (currentFriendPosition < 0)
+                    //    currentFriendPosition = usersFriendIds.size()-1;
                 }
-                setupFriend();
+                //setupFriend();
             }
             break;
         }
@@ -109,11 +118,4 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
         return true;
     }
 
-    private void setupFriend() {
-        long id = usersFriendIds.get(currentFriendPosition);
-        currentFriend = userDBHelper.findUser(id);
-
-        friendsUsername.setText(currentFriend.getUsername());
-        friendsEmail.setText(currentFriend.getEmail());
-    }
 }

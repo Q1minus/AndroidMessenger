@@ -3,27 +3,25 @@ package com.example.vadim.androidmesseger.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vadim.androidmesseger.R;
 import com.example.vadim.androidmesseger.adapters.UserAdapter;
 import com.example.vadim.androidmesseger.fragments.UserInfoFragment;
-import com.example.vadim.androidmesseger.models.UserModel;
-import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 public class UserMessagesActivity extends AppCompatActivity implements View.OnClickListener{
@@ -38,6 +36,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
     Button buttonAddChat;
     TextView emailView;
     ListView listView;
+    ProgressBar progressBar;
 
     UserAdapter userAdapter;
     UserInfoFragment userInfoFragment;
@@ -56,9 +55,10 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         mAuth = FirebaseAuth.getInstance();
         myRef = FirebaseDatabase.getInstance().getReference();
         user = mAuth.getCurrentUser();
-
-        buttonAddChat = findViewById(R.id.AddChatButton);
         emailView = findViewById(R.id.current_email);
+
+        progressBar = findViewById(R.id.progressBar);
+        buttonAddChat = findViewById(R.id.AddChatButton);
         listView = findViewById(R.id.chat_list);
 
         buttonAddChat.setOnClickListener(this);
@@ -66,9 +66,9 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         emailView.setText(user.getEmail());
 
         Query query = myRef.child("Users").child(user.getUid()).child("friends");
-        userAdapter = new UserAdapter(this, String.class, R.layout.user_item, query);
+        userAdapter = new UserAdapter(this, String.class, R.layout.user_item, query, progressBar);
 
-        listView.setAdapter(userAdapter );
+        listView.setAdapter(userAdapter);
         registerForContextMenu(listView);
     }
 
@@ -95,11 +95,17 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         boolean result = true;
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 
         switch (item.getTitle().toString()) {
         case CONTEXT_MENU_ITEM_VIEW:
-            //userInfoFragment.setArguments(bundle);
-            //userInfoFragment.show(getFragmentManager(), FRAGMENT_TAG);
+            Bundle bundle = new Bundle();
+
+            bundle.putStringArrayList("uids", userAdapter.getItems());
+            bundle.putInt("position", info.position);
+
+            userInfoFragment.setArguments(bundle);
+            userInfoFragment.show(getFragmentManager(), FRAGMENT_TAG);
             break;
         case CONTEXT_MENU_ITEM_CALL:
             // TODO Call friend
@@ -124,6 +130,6 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         // TODO Open ChatActivity
-    }*/
-
+    }*/ 
+    
 }
