@@ -61,16 +61,7 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
         friendsPhoto = view.findViewById(R.id.Photo);
         friendsEmail = view.findViewById(R.id.Email);
 
-        myRef.child("Users").child(friendsUid.get(position)).child("email")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        friendsEmail.setText(dataSnapshot.getValue(String.class));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) { }
-                });
+        updateUI();
 
         view.setOnTouchListener(this);
         return view;
@@ -100,22 +91,32 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
             if (Math.abs(deltaX) > MIN_DISTANCE) {
                 /* Right swipe */
                 if (deltaX > 0) {
-                    //currentFriendPosition++;
-                    //if (currentFriendPosition >= usersFriendIds.size())
-                    //    currentFriendPosition = 0;
+                    if (++position >= friendsUid.size())
+                        position = 0;
                 }
                 /* Left swipe */
                 else if (deltaX < 0) {
-                    //currentFriendPosition--;
-                    //if (currentFriendPosition < 0)
-                    //    currentFriendPosition = usersFriendIds.size()-1;
+                    if (--position < 0)
+                        position = friendsUid.size()-1;
                 }
-                //setupFriend();
+                updateUI();
             }
             break;
         }
-
         return true;
+    }
+
+    private void updateUI() {
+        myRef.child("Users").child(friendsUid.get(position)).child("email")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        friendsEmail.setText(dataSnapshot.getValue(String.class));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) { }
+                });
     }
 
 }
