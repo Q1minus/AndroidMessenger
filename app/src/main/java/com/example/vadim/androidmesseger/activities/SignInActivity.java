@@ -59,6 +59,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mAuth.signOut();
+    }
+
+    @Override
     public void onClick(View view) {
         String username = emailEdit.getText().toString();
         String password = passwordEdit.getText().toString();
