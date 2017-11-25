@@ -3,6 +3,7 @@ package com.example.vadim.androidmesseger.adapters;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vadim.androidmesseger.R;
@@ -13,6 +14,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 /**
@@ -30,8 +33,11 @@ public class UserAdapter extends FirebaseListAdapter<String> {
      * @param ref         The Firebase location to watch for data changes. Can also be a slice of a location,
      *                    using some combination of {@code limit()}, {@code startAt()}, and {@code endAt()}.
      */
-    public UserAdapter(Activity activity, Class<String> modelClass, int modelLayout, Query ref) {
+    ProgressBar progressBar;
+
+    public UserAdapter(Activity activity, Class<String> modelClass, int modelLayout, Query ref, ProgressBar progressBar) {
         super(activity, modelClass, modelLayout, ref);
+        this.progressBar = progressBar;
     }
 
     @Override
@@ -39,18 +45,28 @@ public class UserAdapter extends FirebaseListAdapter<String> {
         final TextView tv = view.findViewById(R.id.email);
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
 
-        Query query = myRef.child("Users").child(model).child("email");
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tv.setText(dataSnapshot.getValue(String.class));
-            }
+        progressBar.setVisibility(View.VISIBLE);
+        myRef.child("Users").child(model).child("email")
+                .addValueEventListener( new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        tv.setText(dataSnapshot.getValue(String.class));
+                        progressBar.setVisibility(View.GONE);
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) { }
-        });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) { }
+                });
 
         tv.setText(model);
+    }
+
+    public ArrayList<String> getItems() {
+        ArrayList<String> items = new ArrayList<>();
+        for (int i = 0; i < getCount(); i++) {
+            items.add(getItem(i));
+        }
+        return items;
     }
 
 }
