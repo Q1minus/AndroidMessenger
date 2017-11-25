@@ -15,15 +15,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/Username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:text="@string/DefaultUsername"
-            android:textColor="@color/colorBlack"
-            android:textSize="24sp" />
-
-        <TextView
             android:id="@+id/Email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
