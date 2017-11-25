@@ -64,24 +64,23 @@ public class AddChatActivity extends AppCompatActivity implements View.OnClickLi
         case R.id.AddButton:
             String email = emailEdit.getText().toString().trim();
 
-            Query query = myRef.child("Users").orderByChild("email").equalTo(email);
-            ValueEventListener valueEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for ( DataSnapshot ds : dataSnapshot.getChildren()) {
-                        UserModel friend = ds.getValue(UserModel.class);
+            myRef.child("Users").orderByChild("email").equalTo(email)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for ( DataSnapshot ds : dataSnapshot.getChildren()) {
+                                UserModel friend = ds.getValue(UserModel.class);
 
-                        //TODO add checks if chat already exists
-                        if (friend != null ) {
-                            myRef.child("Users").child(user.getUid()).child("friends").push().setValue(friend.getId());
+                                //TODO add checks if chat already exists
+                                if (friend != null ) {
+                                    myRef.child("Users").child(user.getUid()).child("friends").push().setValue(friend.getId());
+                                }
+                            }
                         }
-                    }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) { }
-            };
-            query.addValueEventListener(valueEventListener);
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) { }
+                    });
 
             break;
         }
