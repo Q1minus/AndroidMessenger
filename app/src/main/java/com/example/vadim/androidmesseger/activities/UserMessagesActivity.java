@@ -3,6 +3,7 @@ package com.example.vadim.androidmesseger.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,14 +18,15 @@ import com.example.vadim.androidmesseger.adapters.UserAdapter;
 import com.example.vadim.androidmesseger.fragments.UserInfoFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 
-
-public class UserMessagesActivity extends AppCompatActivity implements View.OnClickListener{
+public class UserMessagesActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     static final String FRAGMENT_TAG                = "user_info";
 
     static final String CONTEXT_MENU_ITEM_VIEW      = "View";
@@ -69,6 +71,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         userAdapter = new UserAdapter(this, String.class, R.layout.user_item, query, progressBar);
 
         listView.setAdapter(userAdapter);
+        listView.setOnItemClickListener(this);
         registerForContextMenu(listView);
     }
 
@@ -117,7 +120,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
             // TODO Edit friend's info
             break;
         case CONTEXT_MENU_ITEM_REMOVE:
-            // TODO Remove from friend list
+                    // TODO Remove from friend list
             break;
         default:
             result = super.onContextItemSelected(item);
@@ -126,10 +129,12 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         return result;
     }
 
-    /*@Override
-    protected void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-        // TODO Open ChatActivity
-    }*/ 
-    
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        String friendUid = userAdapter.getItem(i);
+
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("uid", friendUid);
+        startActivity(intent);
+    }
 }
