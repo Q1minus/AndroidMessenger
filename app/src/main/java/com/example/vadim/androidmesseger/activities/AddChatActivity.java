@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
+import com.example.vadim.androidmesseger.models.ChatMessageModel;
 import com.example.vadim.androidmesseger.models.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -74,6 +76,8 @@ public class AddChatActivity extends AppCompatActivity implements View.OnClickLi
                                 //TODO add checks if chat already exists
                                 if (friend != null ) {
                                     myRef.child("Users").child(user.getUid()).child("friends").push().setValue(friend.getId());
+                                    Toast.makeText(AddChatActivity.this, String.format("User %s added", friend.getEmail()), Toast.LENGTH_LONG).show();
+                                    finish();
                                 }
                             }
                         }
