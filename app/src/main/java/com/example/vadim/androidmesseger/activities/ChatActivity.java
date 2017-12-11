@@ -1,5 +1,6 @@
 package com.example.vadim.androidmesseger.activities;
 
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -42,11 +43,13 @@ public class ChatActivity extends AppCompatActivity {
         myRef = FirebaseDatabase.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
+        //FIXME Redesine via SoundPool
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.click_sound_1);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mp.start();
                 ChatMessageModel message = new ChatMessageModel(user.getEmail(), messageEdit.getText().toString());
-
                 myRef.child("Users").child(user.getUid()).child("messages").child(friendUid).push().setValue(message);
                 if (user.getUid() != friendUid){
                     myRef.child("Users").child(friendUid).child("messages").child(user.getUid()).push().setValue(message);
