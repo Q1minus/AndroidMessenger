@@ -19,6 +19,11 @@
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress" />
 
+        <ListView
+            android:id="@+id/all_users_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
         <Button
             android:id="@+id/AddButton"
             android:layout_width="match_parent"
