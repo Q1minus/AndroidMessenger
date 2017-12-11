@@ -7,7 +7,8 @@
         android:id="@+id/Photo"
         android:layout_width="@dimen/DetailUserPhotoWidth"
         android:layout_height="@dimen/DetailUserPhotoHeight"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_launcher"
+        android:scaleType="matrix"/>
 
     <LinearLayout
         android:layout_height="match_parent"

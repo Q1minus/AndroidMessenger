@@ -1,46 +1,51 @@
 package com.example.vadim.androidmesseger.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DialogFragment;
+import android.graphics.Matrix;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.vadim.androidmesseger.R;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
 
 public class UserInfoFragment extends DialogFragment implements View.OnTouchListener{
-    public static final String KEY_FRIEND_POSITION = "friendPosition";
-    public static final String KEY_FRIEND_LIST_IDS = "friend_list_ids";
     public static final int MIN_DISTANCE           = 150;
 
-    ImageView friendsPhoto;
-    TextView friendsEmail;
-
-    FirebaseUser user;
-    private float x1, x2;
+    private float x1, x2, y1, y2;
     private ArrayList<String> friendsUid;
     private int position;
 
-    private FirebaseAuth mAuth;
     private DatabaseReference myRef;
+
+    ImageView friendsPhoto;
+    Matrix matrix = new Matrix();
+    Float scale = 1f;
+    ScaleGestureDetector scaleGestureDetector;
+    TextView friendsEmail;
+
+    FirebaseUser user;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,9 +54,11 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
         position = getArguments().getInt("position");
         friendsUid = getArguments().getStringArrayList("uids");
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         myRef = FirebaseDatabase.getInstance().getReference();
         user = mAuth.getCurrentUser();
+
+        scaleGestureDetector = new ScaleGestureDetector(getActivity(), new ScaleListener());
     }
 
     @Override
@@ -78,17 +85,21 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent event) {
+        scaleGestureDetector.onTouchEvent(event);
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
             x1 = event.getX();
+            y1 = event.getY();
             break;
         case MotionEvent.ACTION_UP:
             x2 = event.getX();
+            y2 = event.getY();
             float deltaX = x2 - x1;
 
-            if (Math.abs(deltaX) > MIN_DISTANCE) {
+            if (!(x1 <= 192 && y1 <= 192) && Math.abs(deltaX) > MIN_DISTANCE) {
                 /* Right swipe */
                 if (deltaX > 0) {
                     if (++position >= friendsUid.size())
@@ -101,10 +112,12 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
                 }
                 updateUI();
             }
+
             break;
         }
         return true;
     }
+
 
     private void updateUI() {
         myRef.child("Users").child(friendsUid.get(position)).child("email")
@@ -117,6 +130,36 @@ public class UserInfoFragment extends DialogFragment implements View.OnTouchList
                     @Override
                     public void onCancelled(DatabaseError databaseError) { }
                 });
+
+        final StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        myRef.child("Users").child(friendsUid.get(position)).child("photo")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String imageName = dataSnapshot.getValue(String.class);
+                        if (imageName != null){
+                            Glide.with(getActivity())
+                                    .using(new FirebaseImageLoader())
+                                    .load(storageRef.child("images").child(imageName))
+                                    .into(friendsPhoto);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) { }
+                });
+
+    }
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scale *= detector.getScaleFactor();
+
+            matrix.setScale(scale, scale);
+            friendsPhoto.setImageMatrix(matrix);
+            return true;
+        }
     }
 
 }
