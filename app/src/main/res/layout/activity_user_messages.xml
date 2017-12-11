@@ -1,44 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_user_message"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    tools:context="com.example.vadim.androidmesseger.activities.UserMessagesActivity">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <Button
+        android:id="@+id/AddChatButton"
+        android:text="@string/AddChat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:visibility="gone" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toStartOf="@+id/chat_list"/>
+
+    <Button
+        android:id="@+id/edit_profile_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/current_email"
+        android:text="@string/edit_profile" />
 
     <TextView
         android:id="@+id/current_email"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:text="@string/hint_email"
+        android:textSize="24dp"
         android:textColor="@color/colorBlack" />
 
     <ListView
         android:id="@+id/chat_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/current_email">
-    </ListView>
+        android:layout_below="@+id/current_email"/>
 
-    <LinearLayout
-        android:id="@+id/layout_bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/AddChatButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/AddChat"/>
-    </LinearLayout>
 
 </RelativeLayout>
