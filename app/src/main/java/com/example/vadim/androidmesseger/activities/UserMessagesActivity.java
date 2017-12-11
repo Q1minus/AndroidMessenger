@@ -33,7 +33,6 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
     static final String FRAGMENT_TAG                = "user_info";
 
     static final String CONTEXT_MENU_ITEM_VIEW      = "View";
-    static final String CONTEXT_MENU_ITEM_EDIT      = "Edit";
     static final String CONTEXT_MENU_ITEM_REMOVE    = "Remove";
 
     TextView emailView;
@@ -44,7 +43,6 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
     UserInfoFragment userInfoFragment;
     FirebaseUser user;
 
-    private FirebaseAuth mAuth;
     private DatabaseReference myRef;
 
 
@@ -54,7 +52,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_user_messages);
 
         userInfoFragment = new UserInfoFragment();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         myRef = FirebaseDatabase.getInstance().getReference();
         user = mAuth.getCurrentUser();
         emailView = findViewById(R.id.current_email);
@@ -68,6 +66,7 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
         emailView.setText(user.getEmail());
 
         Query query = myRef.child("Users").child(user.getUid()).child("friends");
+
         userAdapter = new UserAdapter(this, String.class, R.layout.user_item, query);
 
         listView.setAdapter(userAdapter);
@@ -81,7 +80,6 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
         super.onCreateContextMenu(contextMenu, view, contextMenuInfo);
         contextMenu.add(0, view.getId(), 0, CONTEXT_MENU_ITEM_VIEW);
-        contextMenu.add(0, view.getId(), 0, CONTEXT_MENU_ITEM_EDIT);
         contextMenu.add(0, view.getId(), 0, CONTEXT_MENU_ITEM_REMOVE);
     }
 
@@ -112,9 +110,6 @@ public class UserMessagesActivity extends AppCompatActivity implements View.OnCl
 
             userInfoFragment.setArguments(bundle);
             userInfoFragment.show(getFragmentManager(), FRAGMENT_TAG);
-            break;
-        case CONTEXT_MENU_ITEM_EDIT:
-            // TODO Edit friend's info
             break;
         case CONTEXT_MENU_ITEM_REMOVE:
             final String removableUid = userAdapter.getItem(info.position);
