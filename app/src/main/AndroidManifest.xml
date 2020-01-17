@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.vadim.androidmesseger">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,10 +18,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.AuthorizationActivity" />
-        <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.SignInActivity" />
+        <activity android:name=".activities.SignUpActivity" />
         <activity android:name=".activities.UserMessagesActivity" />
-        <activity android:name=".activities.AddChatActivity"></activity>
+        <activity android:name=".activities.AddChatActivity" />
+        <activity android:name=".activities.ChatActivity" />
+
+        <service
+            android:name=".services.MessageNotificationService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".activities.ProfileActivity"></activity>
     </application>
 
 </manifest>

@@ -6,19 +6,36 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.vadim.androidmesseger.R;
-import com.example.vadim.androidmesseger.database.FriendListDBHelper;
-import com.example.vadim.androidmesseger.database.UserDBHelper;
+import com.example.vadim.androidmesseger.adapters.UserAdapter;
+import com.example.vadim.androidmesseger.models.ChatMessageModel;
 import com.example.vadim.androidmesseger.models.UserModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class AddChatActivity extends AppCompatActivity implements View.OnClickListener{
     Button buttonAdd;
-    EditText username, email;
-    FriendListDBHelper friendListDBHelper;
-    UserDBHelper userDBHelper;
-    UserModel user;
+    EditText emailEdit;
+    ListView listViewAllUsers;
+
+    UserAdapter userAdapter;
+
+    FirebaseUser user;
+    private DatabaseReference myRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,55 +43,76 @@ public class AddChatActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_add_chat);
 
         buttonAdd = findViewById(R.id.AddButton);
+        emailEdit = findViewById(R.id.AddChatEmailField);
+        listViewAllUsers = findViewById(R.id.all_users_listview);
+
         buttonAdd.setOnClickListener(this);
 
-        username = findViewById(R.id.AddChatUsernameField);
-        email = findViewById(R.id.AddChatEmailField);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        myRef = FirebaseDatabase.getInstance().getReference();
 
-        friendListDBHelper = new FriendListDBHelper(this);
-        userDBHelper = new UserDBHelper(this);
+        user = mAuth.getCurrentUser();
 
-        user = new UserModel(getIntent());
+        myRef.child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("BATMAN", dataSnapshot.toString());
+                ArrayList<String> uids = new ArrayList<>();
+                for (DataSnapshot id : dataSnapshot.getChildren()) {
+                    uids.add(id.getKey());
+                }
+
+                myRef.child("AllUsers").setValue(uids);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) { }
+        });
+        userAdapter = new UserAdapter(this, String.class, R.layout.user_item, myRef.child("AllUsers"));
+
+        listViewAllUsers.setAdapter(userAdapter);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString("username", username.getText().toString());
-        outState.putString("password", email.getText().toString());
+        outState.putString("email", emailEdit.getText().toString());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
-        username.setText(savedState.getString("username"));
-        email.setText(savedState.getString("password"));
+        emailEdit.setText(savedState.getString("email"));
     }
-
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
         case R.id.AddButton:
-            String stringUsername = username.getText().toString();
-            String stringEmail = email.getText().toString();
-            if (stringUsername.isEmpty()) {
-                stringUsername = "null";
-            }
-            if (stringEmail.isEmpty()) {
-                stringEmail = "null";
-            }
+            String email = emailEdit.getText().toString().trim();
 
-            UserModel foundUser = userDBHelper.findUser(stringUsername, stringEmail);
-            if (foundUser != null) {
-                long a = friendListDBHelper.addFriend(user.getId(), foundUser.getId());
-                finish();
-            }
-            else {
-                Toast.makeText(getApplicationContext(), R.string.UserNotFound, Toast.LENGTH_LONG).show();
-            }
+            myRef.child("Users").orderByChild("email").equalTo(email)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for ( DataSnapshot ds : dataSnapshot.getChildren()) {
+                                UserModel friend = ds.getValue(UserModel.class);
+
+                                //TODO add checks if chat already exists
+                                if (friend != null ) {
+                                    myRef.child("Users").child(user.getUid()).child("friends").push().setValue(friend.getId());
+                                    Toast.makeText(AddChatActivity.this, String.format("User %s added", friend.getEmail()), Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) { }
+                    });
+
             break;
         }
     }

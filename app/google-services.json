@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "909660102019",
+    "firebase_url": "https://androidmesseger.firebaseio.com",
+    "project_id": "androidmesseger",
+    "storage_bucket": "androidmesseger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:909660102019:android:7d851682c4bf76d1",
+        "android_client_info": {
+          "package_name": "com.example.vadim.androidmesseger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "909660102019-suoapd3kk3gbrtkijlm0pl4iuh68d6g1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vadim.androidmesseger",
+            "certificate_hash": "05bc9e77ae96b38192e7ee9b9355211a7dfcbd5c"
+          }
+        },
+        {
+          "client_id": "909660102019-69jigsau8eovjaacib5sn1qilq9fot94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-upY13S2BQd17IFkrB7K8aTWMwR5QICk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "909660102019-69jigsau8eovjaacib5sn1qilq9fot94.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
